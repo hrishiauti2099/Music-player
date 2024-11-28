@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>PLAY IT(BY HRISHIKESH) Music Player</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+	<style>
+		body {
+           font-family: 'Bokor', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+             background: radial-gradient(circle,#B2BEB5,#4B0082);
+              flex-direction: column;
+    color: white;
+        }
+
+        .player {
+    background: linear-gradient(270deg, #808080,#A9A9A9,#696969, #36454F,#B2BEB5,#D3D3D3);
+    background-size: 400% 400%;
+    animation: gradientMove 60s ease infinite;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(10, 10, 10, 0.5);
+    text-align: center;
+    width: 300px;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+        .track-art {
+            background-color: #ccc;
+            height: 250px;
+            width: 290px;
+            border-radius: 70%;
+            margin-bottom: 20px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .track-name {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #000000;
+        }
+
+        .track-artist {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        .search-bar {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+}
+
+#search-input {
+    padding: 10px;
+    font-size: 16px;
+    width: 230px;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #0047AB;
+    color: white;
+    border: black;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+button:hover {
+    background-color: blue;
+    color: white;
+    transform: scale(1.2);
+
+}
+
+
+       .buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.buttons i {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.buttons i:hover {
+    background-color: #0047AB;
+    color: #ffffff;
+    transform: scale(1.2);
+}
+
+        .playpause-track, .prev-track, .next-track {
+            cursor: pointer;
+            padding: 15px;
+            font-size: 24px;
+            margin: 0 10px;
+        }
+
+        .seek_slider, .volume_slider {
+            width: 80%;
+            margin: 10px 0;
+        }
+
+        .player-title {
+    background-color: #333333;
+    color: yellow;
+    padding: 15px;
+    font-size: 50px;
+    font-weight: 1000;
+     font-family: 'Playfair Display', serif;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+width:20%;
+}
+	</style>
+</head>
+<body>
+<div class="player-title">PLAY IT🎧</div>
+<div class="search-bar">
+	<input type="text" id="search-input" placeholder="Search for a song..." />
+	<button onclick="searchSongs()">Search</button>
+</div>
+
+
+<div class="player">
+	<div class="track-art"></div>
+	<div class="track-name"></div>
+	<div class="track-artist"></div>
+
+	<div class="buttons">
+		<div class="prev-track"><i class="fa fa-step-backward"></i></div>
+		<div class="playpause-track" onclick="playpauseTrack()"><i class="fa fa-play-circle"></i></div>
+		<div class="next-track"><i class="fa fa-step-forward"></i></div>
+	</div>
+
+
+	<input type="range" class="seek_slider" value="0" onchange="seekTo()">
+	<i class="fas fa-music"></i>
+
+	<input type="range" class="volume_slider" value="100" onchange="setVolume()">
+	<i class="fas fa-volume-up"></i>
+</div>
+
+<script>
+	let track_index = 0;
+    let isPlaying = false;
+    let curr_track = document.createElement('audio');
+
+    const songs = [
+        {
+            name: "Hukum",
+            artist: "Anirudh Ravichander",
+            image:"https://pagalworld.cool/siteuploads/thumb/sft2/924_resize2x_220x220.webp",
+            path: "https://pagalworld.cool/files/download/id/924"
+        },{
+            name: "Sultan ",
+            artist: "Vijay Urs, Abhishek Chaithra Soman,Santhosh, Chethan Naik, Deepesh A K, Renjith Unni, Balraj Jagade",
+            image: "https://pagalnew.com/coverimages/Sultan-KGF-Chapter-1-500-500.jpg",
+             path:"https://pagalnew.com/128-download/24538.mp3"
+        } ,
+        {
+        name: "Tera Ban Jaunga",
+        artist: "Akhil Sachdeva, Tulsi Kumar",
+        image: "https://pagalfree.com/images/128Tera%20Ban%20Jaunga%20-%20Kabir%20Singh%20128%20Kbps.jpg",
+        path: "https://pagalfree.com/musics/128-Tera%20Ban%20Jaunga%20-%20Kabir%20Singh%20128%20Kbps.mp3"
+    },
+    {
+        name: "Kesariya",
+        artist: "Arijit Singh, Pritam",
+        image: "https://www.pagalworld.com.sb/siteuploads/thumb/sft14/6591_4.jpg",
+        path: "https://www.pagalworld.com.sb/files/download/type/128/id/6591/1.mp3?1"
+    },
+    {
+        name: "Rataan Lambiyan",
+        artist: "Jubin Nautiyal, Asees Kaur",
+        image: "https://pagalfree.com/images/128Raataan%20Lambiyan%20-%20Shershaah%20128%20Kbps.jpg",
+        path: "https://pagalfree.com/musics/128-Raataan%20Lambiyan%20-%20Shershaah%20128%20Kbps.mp3"
+    },
+    {
+        name: "Nadaaniyan ",
+        artist: "Akshath Acharya",
+        image: "https://www.pagalworld.com.sb/siteuploads/thumb/sft144/71532_4.jpg",
+        path: "https://www.pagalworld.com.sb/files/download/type/128/id/71532/1.mp3?1"
+    },
+    {
+        name: "O Mahi O Mahi",
+        artist: "Arijit Singh",
+        image: "https://www.pagalworld.com.sb/siteuploads/thumb/sft138/68671_4.jpg",
+        path: "https://www.pagalworld.com.sb/files/download/type/128/id/68671/1.mp3?1"
+    },
+    {
+        name: "Shayad",
+        artist: "Arijit Singh",
+        image: "https://www.pagalworld.com.sb/siteuploads/thumb/sft4/1857_4.jpg",
+        path: "https://www.pagalworld.com.sb/files/download/type/128/id/1857/1.mp3?1"
+    },
+    {
+        name: "Ghungroo",
+        artist: "Arijit Singh, Shilpa Rao",
+        image: "https://ghantalele.com/uploads/thumbs/cat/620_2.jpg",
+        path: "https://ghantalele.com/uploads/files1/data-8/3642/Ghungroo_192(Ghantalele.com).mp3"
+    },
+        {
+            name: "Bajrang Baan",
+            artist: "Rasraj Ji Maharaj",
+            image: "https://imgs.search.brave.com/6J8cDZJDZEZl6qcWd0AOwTyGaD61Q6HQOCxVpjNh1LY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vZGJydXNo/LmluL3dwLWNvbnRl/bnQvdXBsb2Fkcy8y/MDIxLzA0LzQtbWlu/LTEuanBnP2ZpdD02/MDAsNjAwJnNzbD0x",
+            path: "https://www.pagalworld.com.sb/files/download/type/192/id/67823/1.mp3?1"
+        },
+          {
+            name: "Sultan ",
+            artist: "Sukhwinder Singh, Shadab Faridi",
+            image: "https://imgs.search.brave.com/Fg_lwRjdfiaPoBndMtxX8vmgNpS4_Ro5ttqrS0uQHqw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzg1LzRm/LzVmLzg1NGY1ZjY1/MGRjNzU0YTg0NTRm/NzYxOGVkMGJhYTgy/LmpwZw",
+            path:"https://pagalfree.com/musics/128-Sultan%20-%20Sultan%20128%20Kbps.mp3"
+        }
+    ];
+
+     function searchSongs() {
+        const searchInput = document.getElementById("search-input").value.toLowerCase();
+        const matchedSong = songs.find(
+            (song) =>
+                song.name.toLowerCase().includes(searchInput) ||
+                song.artist.toLowerCase().includes(searchInput)
+        );
+
+        if (matchedSong) {
+            // Load and play the matched song
+            const matchedIndex = songs.indexOf(matchedSong);
+            loadTrack(matchedIndex);
+            curr_track.play();
+            isPlaying = true;
+            playpause_btn.innerHTML = '<i class="fa fa-pause-circle"></i>';
+        } else {
+            alert("No matching song found!");
+        }}
+
+    const track_art = document.querySelector(".track-art");
+    const track_name = document.querySelector(".track-name");
+    const track_artist = document.querySelector(".track-artist");
+    const playpause_btn = document.querySelector(".playpause-track");
+
+    function loadTrack(index) {
+        curr_track.src = songs[index].path;
+        curr_track.load();
+
+        track_art.style.backgroundImage = `url(${songs[index].image})`;
+        track_name.textContent = songs[index].name;
+        track_artist.textContent = songs[index].artist;
+
+        resetValues();
+    }
+
+    function resetValues() {
+        document.querySelector(".seek_slider").value = 0;
+    }
+
+    function playpauseTrack() {
+        if (isPlaying) {
+            curr_track.pause();
+            playpause_btn.innerHTML = '<i class="fa fa-play-circle"></i>';
+        } else {
+            curr_track.play();
+            playpause_btn.innerHTML = '<i class="fa fa-pause-circle"></i>';
+        }
+        isPlaying = !isPlaying;
+    }
+
+    function nextTrack() {
+        track_index = (track_index + 1) % songs.length;
+        loadTrack(track_index);
+        curr_track.play();
+        isPlaying = true;
+        playpause_btn.innerHTML = '<i class="fa fa-pause-circle"></i>';
+    }
+
+    function prevTrack() {
+        track_index = (track_index - 1 + songs.length) % songs.length;
+        loadTrack(track_index);
+        curr_track.play();
+        isPlaying = true;
+        playpause_btn.innerHTML = '<i class="fa fa-pause-circle"></i>';
+    }
+
+    function seekTo() {
+        const seekValue = document.querySelector(".seek_slider").value;
+        curr_track.currentTime = curr_track.duration * (seekValue / 100);
+    }
+
+    function setVolume() {
+        const volumeValue = document.querySelector(".volume_slider").value;
+        curr_track.volume = volumeValue / 100;
+    }
+
+    document.querySelector(".prev-track").addEventListener("click", prevTrack);
+    document.querySelector(".next-track").addEventListener("click", nextTrack);
+
+    curr_track.addEventListener("timeupdate", () => {
+        const progress = curr_track.currentTime / curr_track.duration * 100;
+        document.querySelector(".seek_slider").value = progress || 0;
+    });
+
+    loadTrack(track_index);
+</script>
+</body>
+</html>
