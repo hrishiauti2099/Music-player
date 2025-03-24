@@ -1,1 +1,1 @@
-Music player web application
+Music player web application  developed in Internship 
