@@ -18,5 +18,5 @@ HTML5 – for page structure
 CSS3 – for styling and layout
 
 JavaScript  – for dynamic functionality
-![ScreenShot]()
+![ScreenShot](Online_Internship_project_Music_player.jpg)
 
